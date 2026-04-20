@@ -35,3 +35,55 @@ git push
 
 - Nếu commit một file APK lớn trước khi cấu hình `Git LFS`, GitHub vẫn có thể từ chối push.
 - Với các file đã từng commit kiểu Git thường và chưa push lên remote, cần đưa lại file đó vào commit mới dưới dạng `Git LFS` hoặc viết lại lịch sử commit tương ứng.
+
+## Dọn lịch sử để giảm dung lượng repo
+
+Script [scripts/Optimize-RepoHistory.ps1](D:/trash/Mobimap_Android_install/scripts/Optimize-RepoHistory.ps1) sẽ:
+
+- hiển thị dung lượng repo trước và sau khi tối ưu
+- hiển thị tiến trình từng bước sau khi chọn option
+- `pull --ff-only` branch hiện tại từ remote trước khi bắt đầu, trừ khi dùng `-SkipPull`
+- tạo mirror backup ngoài repo
+- xóa lịch sử của các file khớp pattern, mặc định là `*.apk`
+- khôi phục lại đúng bộ file đang có ở `HEAD`
+- commit lại các file đó dưới `Git LFS`
+- tùy chọn `push --force` branch hiện tại
+
+Ví dụ:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\Optimize-RepoHistory.ps1
+```
+
+Khi chạy không truyền tham số, script sẽ hiện menu để chọn:
+
+- tối ưu có pull
+- tối ưu có pull và push force
+- tối ưu bỏ qua pull
+- tối ưu bỏ qua pull và push force
+- hoặc chế độ tùy chỉnh
+
+Sau khi chọn option, script sẽ in:
+
+- cấu hình đã chọn
+- bước đang chạy theo dạng `[n/tổng]`
+- dung lượng repo trước và sau khi tối ưu
+- và giữ cửa sổ chờ `Enter` khi chạy ở chế độ tương tác
+
+Có thể ép hiện menu ngay cả khi truyền tham số khác:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\Optimize-RepoHistory.ps1 -Interactive
+```
+
+Có thể push luôn sau khi dọn:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\Optimize-RepoHistory.ps1 -PushCurrentBranch
+```
+
+Nếu không muốn `pull` trước khi chạy:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\Optimize-RepoHistory.ps1 -SkipPull
+```
